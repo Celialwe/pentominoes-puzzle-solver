@@ -1,0 +1,47 @@
+letter(t). letter(u). letter(v). letter(w). letter(x). letter(y). letter(z). letter(f). letter(i). letter(l). letter(p). letter(n).
+
+%basic encoding of pentominoes
+shape(t,0, 0, 0). shape(t,0, 0, 1). shape(t,0, 0, 2). shape(t,0, 1, 1). shape(t,0, 2, 1).
+shape(u,0, 0, 0). shape(u,0, 1, 0). shape(u,0, 1, 1). shape(u,0, 1, 2). shape(u,0, 0, 2).
+shape(v,0, 0, 0). shape(v,0, 1, 0). shape(v,0, 2, 0). shape(v,0, 0, 1). shape(v,0, 0, 2).
+shape(w,0, 0, 0). shape(w,0, 0, 1). shape(w,0, 1, 1). shape(w,0, 1, 2). shape(w,0, 2, 2).
+shape(x,0, 1, 0). shape(x,0, 0, 1). shape(x,0, 1, 1). shape(x,0, 1, 2). shape(x,0, 2, 1).
+shape(y,0, 0, 0). shape(y,0, 1, 0). shape(y,0, 2, 0). shape(y,0, 3, 0). shape(y,0, 1, 1).
+shape(z,0, 0, 0). shape(z,0, 0, 1). shape(z,0, 1, 1). shape(z,0, 2, 1). shape(z,0, 2, 2).
+shape(f,0, 0, 0). shape(f,0, 0, 1). shape(f,0, 1, 1). shape(f,0, 2, 1). shape(f,0, 1, 2).
+shape(i,0, 0, 0). shape(i,0, 1, 0). shape(i,0, 2, 0). shape(i,0, 3, 0). shape(i,0, 4, 0).
+shape(l,0, 0, 0). shape(l,0, 1, 0). shape(l,0, 2, 0). shape(l,0, 3, 0). shape(l,0, 3, 1).
+shape(p,0, 0, 0). shape(p,0, 0, 1). shape(p,0, 1, 0). shape(p,0, 1, 1). shape(p,0, 2, 0).
+shape(n,0, 0, 0). shape(n,0, 1, 0). shape(n,0, 2, 0). shape(n,0, 2, 1). shape(n,0, 3, 1).
+
+
+max_row(A, X) :- X = #max{ I : shape(A, 0, I, _ ), letter(A)}, letter(A). %maximum row for each pentomino
+max_column(A, Y) :- Y = #max{ J : shape(A, 0, _, J ), letter(A)}, letter(A). %maximum column for each pentomino
+
+%2 shapes pentomino
+shape(i, 1, 0, 0). shape(i, 1, 0, 1). shape(i, 1, 0, 2). shape(i, 1, 0, 3). shape(i, 1, 0, 4).
+
+%4 shapes pentominoes
+shape4(t). shape4(u). shape4(v). shape4(w).
+%first method
+shape(A, 1, Y , -X +X1 ) :- shape4(A), shape(A, 0, X, Y), max_row(A, X1).
+shape(A, 2, -X + X1, -Y + Y1) :- shape4(A), shape(A, 0, X, Y), max_row(A, X1), max_column(A, Y1).
+shape(A, 3, -Y + Y1 , X) :- shape4(A), shape(A, 0, X, Y), max_column(A, Y1).
+%encoding for z
+shape(z, 1, 2, 0). shape(z, 1, 2, 1). shape(z, 1, 1, 1). shape(z, 1, 0, 1). shape(z, 1, 0, 2).
+shape(z, 2, 0, 0). shape(z, 2, 1, 0). shape(z, 2, 1, 1). shape(z, 2, 1, 2). shape(z, 2, 2, 2).
+shape(z, 3, 2, 0). shape(z, 3, 1, 0). shape(z, 3, 1, 1). shape(z, 3, 1, 2). shape(z, 3, 0, 2).
+
+%8 shapes pentominoes
+shape8(f). shape8(p). shape8(n). shape8(l). shape8(y).
+shape(A, 1, -X + X1, Y) :- shape8(A), shape(A, 0, X, Y), max_row(A, X1).
+shape(A, 2, X, -Y + Y1) :- shape8(A), shape(A, 0, X, Y), max_column(A, Y1).
+shape(A, 3, -X + X1, -Y + Y1) :- shape8(A), shape(A, 0, X, Y), max_row(A, X1), max_column(A, Y1).
+shape(A, 4, Y, X) :- shape8(A), shape(A, 0, X, Y).
+shape(A, 5, -Y + Y1, -X + X1) :- shape8(A), shape(A, 0, X, Y), max_row(A, X1), max_column(A, Y1).
+shape(A, 6, -Y + Y1, X) :- shape8(A), shape(A, 0, X, Y), max_column(A, Y1).
+shape(A, 7, Y, -X + X1) :- shape8(A), shape(A, 0, X, Y), max_row(A, X1).
+
+max_row_selected(A, N, X) :- X = #max{ I : shape(A, N, I, _ )}, letter(A), shape(A, N, _, _). %maximum row for each pentomino
+max_column_selected(A, N, Y) :- Y = #max{ J : shape(A, N, _, J )}, letter(A), shape(A, N, _, _). %maximum column for each pentomino
+
